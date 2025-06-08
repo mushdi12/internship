@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"time"
 )
 
 type Worker struct {
@@ -24,7 +25,6 @@ func (w *Worker) DoWork(input <-chan string, wg *sync.WaitGroup) {
 	for {
 		select {
 		case <-w.ctx.Done():
-			wg.Done()
 			return
 		case letter := <-input:
 			w.task(strconv.Itoa(w.id), letter)
@@ -76,7 +76,7 @@ func (wp *WorkerPool) addWorker() {
 }
 
 func (wp *WorkerPool) AddWorkers(count int) {
-	for i := 0; i <= count; i++ {
+	for i := 0; i < count; i++ {
 		wp.addWorker()
 	}
 }
@@ -119,6 +119,7 @@ func (wp *WorkerPool) WaitAndStop() {
 
 func (wp *WorkerPool) Submit(data []string) {
 	for _, d := range data {
+		time.Sleep(1 * time.Second)
 		wp.wg.Add(1)
 		wp.input <- d
 	}

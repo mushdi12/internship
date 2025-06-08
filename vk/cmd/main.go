@@ -41,12 +41,17 @@ func main() {
 
 	wkPool := worker.NewWorkerPool(printer)
 
-	wkPool.AddWorkers(10)
+	wkPool.AddWorkers(2)
 
 	go wkPool.Start()
 
-	wkPool.Submit(dictionary)
+	go wkPool.Submit(dictionary)
 
+	time.Sleep(10 * time.Second)
+	
+	wkPool.Remove(0)
+
+	time.Sleep(100 * time.Second)
 	wkPool.WaitAndStop()
 
 }
